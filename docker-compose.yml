@@ -1,0 +1,75 @@
+version: "3.3"
+
+services:
+    # ##################################################################
+    # Serve local packages
+    # ##################################################################
+    # This config allows us to manage our package directory locally,
+    # rather than in a volume managed directly by docker. Note that
+    # especially if running from a Mac, this may cause performance
+    # degradations, which can be worked around by using the `consistency`
+    # setting if desired. Here, we mount a local `./packages` directory
+    # to `/data/packages`, overriding the standard volume.
+    # ##################################################################
+  devpi:
+      image: muccg/devpi:latest
+      volumes:
+        - /home/beyond/personal/packages-artifactory/data:/data
+      ports:
+        - 3141:3141
+      environment:
+        - DEVPI_PASSWORD="somepassword"
+      restart: always
+
+  # pypiserver-local-packages:
+  #   image: pypiserver/pypiserver:latest
+  #   volumes:
+  #     - type: bind
+  #       source: ./packages
+  #       target: /data/packages
+  #   ports:
+  #     - "8082:8080"
+
+  # verdaccio:
+  #   image: verdaccio/verdaccio:nightly-master
+  #   container_name: verdaccio
+  #   environment:
+  #     - VERDACCIO_PORT
+  #   ports:
+  #     - $VERDACCIO_PORT:$VERDACCIO_PORT
+  #   volumes:
+  #     - verdaccio-storage:/verdaccio/storage
+
+  # registry:
+  #   restart: always
+  #   image: registry:2
+  #   container_name: docker-registry
+  #   ports:
+  #     - 5000:5000
+  #   environment:
+  #     REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+  #   volumes:
+  #     - registry/data:/var/lib/registry
+  #     - registry/certs:/certs
+  #     - registry/auth:/auth
+
+  # chartsmuseum:
+  #   restart: always
+  #   image: ghcr.io/helm/chartmuseum:v0.15.0
+  #   container_name: charts-museum
+  #   ports:
+  #     - 8081:5000
+  #   environment:
+  #     DEBUG: 1
+  #     STORAGE: "amazon"
+  #     STORAGE_AMAZON_BUCKET: "my-s3-bucket"
+  #     STORAGE_AMAZON_PREFIX: ""
+  #     STORAGE_AMAZON_REGION: "us-east-1"
+  #     AWS_ACCESS_KEY_ID: ""
+  #     AWS_SECRET_ACCESS_KEY: ""
+
+
+# volumes:
+#   verdaccio:
+#     driver: local
+
